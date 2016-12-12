@@ -1,0 +1,32 @@
+#StashConnection
+# Information required to establish network connections into a Stash server
+StashConnection:
+  url: http://your_server:7990
+  username: your_username
+  password: your_password
+  requests: # items related to requests library
+   verify: True # value to pass into requests verify parameter
+
+#StashProjectRepos
+# Describes parameters that can be used to generate a list of Stash projects
+# and repos for a given StashConnection.
+#
+# GitReposBaseDir is defined in sparc.git.configure.yaml, and will indicate
+# a local directory that will be used to reference the remote origins located
+# on the Stash server.
+#
+# include/exclude parameters are optional, by default all available projects 
+# and repos are listed.  If include is given, then only these projects and 
+# repos are listed.  If exclude is given, then these project/repos will be 
+# removed from the list.
+StashProjectRepos:
+  StashConnection: *reference
+  GitReposBaseDir: *reference
+  include: # optional
+    project key: # actual project key reference
+      - first repo name to include # optional, default is all repos
+      - second repo name to include # optional, default is all repos
+  exclude: # optional
+    project key: # actual project name reference
+      - first repo name to exclude # optional, default is all repos
+      - second repo name to exclude # optional, default is all repos

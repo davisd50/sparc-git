@@ -1,0 +1,4 @@
+#GitReposBaseDir
+# Identifies a local base directory that contains one or more git repos
+GitReposBaseDir:
+  directory: your/relative/or/absolute/directory/name
