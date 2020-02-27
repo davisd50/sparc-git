@@ -57,6 +57,14 @@ class ReposIteratorFromYamlStashProjects(object):
         """
         self.yaml_config = yaml_config if 'StashProjectRepos' in yaml_config else {'StashProjectRepos': yaml_config}
     
+    def _get_clone_url_from_repo_desc(self, repo_desc):
+        clone_url = repo_desc['links']['clone'][0]['href'] #default to 0 entry
+        #now try to find http base url
+        for clone in repo_desc['links']['clone']:
+            if 'http' == clone['name']:
+                return clone['href']
+        return clone_url
+    
     def __iter__(self):
         # iter through config entries
         v_iter = component.getUtility(container.ISparcPyDictValueIterator)
@@ -65,7 +73,7 @@ class ReposIteratorFromYamlStashProjects(object):
             args = [d['StashConnection']['url']]
             kwargs = {'username': d['StashConnection']['username'],
                       'password': d['StashConnection']['password'],
-                      'verify': d['StashConnection']['requests']['verify'],
+                      'verify': d['StashConnection'].get('requests',{}).get('verify', True),
                       'session': s}
             try:
                 stash = Stash(*args, **kwargs)
@@ -100,7 +108,7 @@ class ReposIteratorFromYamlStashProjects(object):
                         continue
                     yield get_cloned_repo(\
                                 d['GitReposBaseDir']['directory'], 
-                                repo_desc['cloneUrl'])
+                                self._get_clone_url_from_repo_desc(repo_desc))
                     
 reposIteratorFromYamlStashProjectsFactory = Factory(ReposIteratorFromYamlStashProjects)
 
